@@ -75,6 +75,8 @@ And we replace the respective block in the covariance matrix of the joint distri
 $$
 \mathbf{f'} = \mathbb{E}[\mathbf{f'} | \mathbf{y}, \mathbf{X}, \mathbf{X'}] = \mathbf{K'}^T [\mathbf{K} + \sigma_n^2 I]^{-1} \mathbf{y}
 $$
+
+
 $$
 \text{cov}(\mathbf{f'}) = \mathbf{K''} - \mathbf{K'}^T [\mathbf{K} + \sigma_n^2 I]^{-1} \mathbf{K'}
 $$
