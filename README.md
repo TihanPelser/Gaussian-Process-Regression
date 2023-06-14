@@ -73,7 +73,9 @@ $$\text{cov}(\mathbf{y}) = K(\mathbf{X}, \mathbf{X}) + \sigma_n^2 I$$
 And we replace the respective block in the covariance matrix of the joint distribution with the new formulation. This leads to the new predictive equations for Gaussian process regression
 
 $$
-\mathbf{f'} = \mathbb{E}[\mathbf{f'} | \mathbf{y}, \mathbf{X}, \mathbf{X'}] = \mathbf{K'}^T [\mathbf{K} + \sigma_n^2 I]^{-1} \mathbf{y} \\
+\mathbf{f'} = \mathbb{E}[\mathbf{f'} | \mathbf{y}, \mathbf{X}, \mathbf{X'}] = \mathbf{K'}^T [\mathbf{K} + \sigma_n^2 I]^{-1} \mathbf{y}
+$$
+$$
 \text{cov}(\mathbf{f'}) = \mathbf{K''} - \mathbf{K'}^T [\mathbf{K} + \sigma_n^2 I]^{-1} \mathbf{K'}
 $$
 
