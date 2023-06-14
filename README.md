@@ -30,7 +30,7 @@ Connecting the entries of each sampled vector illustrates how the 20-dimensional
 
 To smooth the outputs of the MVN, we can use a function to control the covariances, i.e. a _covariance function_. One would expect similar inputs (inputs that are close together) to produce similar outputs, i.e. for a small change in $x$ we expect to see a small change in $y$. One of the more commonly used kernel functions is the squared exponential function, or the Radial Basis Function, given by
 
-$$ RBF(x_i, x_j) = \sigma_f^2 \exp \left[ - \frac{1}{2}\frac{(x_i - x_j)^2}{l^2} \right]$$
+$$ RBF(x_i, x_j) = \sigma_f^2 \exp \left[ - \frac{1}{2}\frac{(x_i - x_j)^2}{l^2} \right] $$
 
 Where $\sigma_f$ is a hyperparameter that determines the vertical span of the kernel outputs and $l$ is the length scale that determines how much the distance between 2 points affects their correlation. (Refer to Figure 2.5 on p.20 of [1] for a visual example of the effects of varying $l$)
 
