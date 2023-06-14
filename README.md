@@ -2,6 +2,8 @@
 
 The following is a brief overview of Gaussian process regression, the [GPR_Theory](GPR_Theory.ipynb) notebook contains a step by step implementation of GP regression following Algorithm 2.1 on p19 of [Gaussian Processes for Machine Learning](https://gaussianprocess.org/gpml/). The [GPR](GPR.ipynb) notebook contains roughly the same information, but uses the custom [gpr](gpr/gpr.py) module which contains all the functions and methods required for perform Gaussian process regression, and takes inspiration from the [Scikit-learn implementation](https://scikit-learn.org/stable/modules/generated/sklearn.gaussian_process.GaussianProcessRegressor.html) of GPR.
 
+---
+
 ## Introduction
 
 A Gaussian Process defines a distribution over functions that fit a set of observed data. We can loosely think of a function in continuous space as a vector of infinite length containing the function values $f(x)$ at each $x$.
@@ -36,32 +38,32 @@ Where $\sigma_f$ is a hyperparameter that determines the vertical span of the ke
 
 ## Gaussian Process Regression
 
-As mentuioned before, a Gaussian Process models a distribution over functions that fit a set a observed data. The mean of this distribution is the function used for regression purposes, and is given by
+As mentioned before, a Gaussian Process models a distribution over functions that fit a set a observed data. The mean of this distribution is the function used for regression purposes, and is given by
 
 $$ P(\mathbf{f}|\mathbf{X}) = \mathcal{N}(\mathbf{f}| \mathbf{\mu}, \mathbf{K})$$
 
 Where $\mathbf{X} = [x_1, \dots, x_n ]$, $\mathbf{f}=[f(x_1),\dots, f(x_n)]$, $\mathbf{\mu} = [m(x_1), \dots, m(x_n)]$ and $K_{ij} = k(x_i, x_j)$. Here, $m$ represents the mean function and $k$ the positive definite kernel function [2]
 
-Without any observations, the mean is assumed to be $\mathbf{\mu} = \mathbf{0}$ (i.e. the prior distribution). By taking the observations $\mathbf{f}(\mathbf{X})$ at locations $\mathbf{X}$ into account, we update the posterior distribution, of which the mean is the regression function $\mathbf{\bar{f}}$, which we can then use to make new predictions $\mathbf{f}(\mathbf{X_*})$ at $\mathbf{X_*}$. From here on, the shorthand $\mathbf{f}$ and $\mathbf{f_*}$ will be used to refer to $\mathbf{f}(\mathbf{X})$ and $\mathbf{f}(\mathbf{X_*})$ respectively.
+Without any observations, the mean is assumed to be $\mathbf{\mu} = \mathbf{0}$ (i.e. the prior distribution). By taking the observations $\mathbf{f}(\mathbf{X})$ at locations $\mathbf{X}$ into account, we update the posterior distribution, of which the mean is the regression function $\mathbf{\bar{f}}$, which we can then use to make new predictions $\mathbf{f}(\mathbf{X'})$ at $\mathbf{X'}$. From here on, the shorthand $\mathbf{f}$ and $\mathbf{f'}$ will be used to refer to $\mathbf{f}(\mathbf{X})$ and $\mathbf{f}(\mathbf{X'})$ respectively.
 
-The join distribution of $\mathbf{f}$ and $\mathbf{f_*}$, $P(\mathbf{f}, \mathbf{f_*}| \mathbf{X}, \mathbf{X_*})$, is given by
+The joint distribution of $\mathbf{f}$ and $\mathbf{f'}$, $P(\mathbf{f}, \mathbf{f'}| \mathbf{X}, \mathbf{X'})$, is given by
 
 $$\begin{bmatrix}
 \mathbf{f}\\
-\mathbf{f_*}
+\mathbf{f'}
 \end{bmatrix}  \sim \mathcal{N} \left( \mathbf{0},
 \begin{bmatrix}
-\mathbf{K} & \mathbf{K_*}\\
-\mathbf{K_*}^T & \mathbf{K_{**}}
+\mathbf{K} & \mathbf{K'}\\
+\mathbf{K'}^T & \mathbf{K''}
 \end{bmatrix} 
 \right)$$
 
-Where $\mathbf{K} = K(\mathbf{X}, \mathbf{X})$, $\mathbf{K_*} = K(\mathbf{X}, \mathbf{X_*})$ and similarly $\mathbf{K_{**}} = K(\mathbf{X_*}, \mathbf{X_*})$.
+Where $\mathbf{K} = K(\mathbf{X}, \mathbf{X})$, $\mathbf{K'} = K(\mathbf{X}, \mathbf{X'})$ and similarly $\mathbf{K''} = K(\mathbf{X'}, \mathbf{X'})$.
 
-For regression purposes, we require the conditional distribution $P(\mathbf{f_*}| \mathbf{f}, \mathbf{X}, \mathbf{X_*})$, the derivation of which can be found in Section A.2 of [1]. The conditional distribution is given by
+For regression purposes, we require the conditional distribution $P(\mathbf{f'}| \mathbf{f}, \mathbf{X}, \mathbf{X'})$, the derivation of which can be found in Section A.2 of [1]. The conditional distribution is given by
 
 $$
-\mathbf{f_*}| \mathbf{f}, \mathbf{X}, \mathbf{X_*}  \sim \mathcal{N}\left(\mathbf{K_*}^T \mathbf{K}^{-1} \mathbf{f}, \mathbf{K_{**}} - \mathbf{K_*}^T \mathbf{K}^{-1} \mathbf{K_*}\right)
+\mathbf{f'}| \mathbf{f}, \mathbf{X}, \mathbf{X'}  \sim \mathcal{N}\left(\mathbf{K'}^T \mathbf{K}^{-1} \mathbf{f}, \mathbf{K''} - \mathbf{K'}^T \mathbf{K}^{-1} \mathbf{K'}\right)
 $$
 
 In practice, measurements often include some noise, i.e. $y = f(x) + \epsilon$. If we assume $\epsilon$ to be zero mean, additive, independent and identically distributed (iid) Gaussian noise with a variance of $\sigma_n^2$, the prior covariance becomes
@@ -71,8 +73,8 @@ $$\text{cov}(\mathbf{y}) = K(\mathbf{X}, \mathbf{X}) + \sigma_n^2 I$$
 And we replace the respective block in the covariance matrix of the joint distribution with the new formulation. This leads to the new predictive equations for Gaussian process regression
 
 $$
-\mathbf{f_*} = \mathbb{E}[\mathbf{f_*} | \mathbf{y}, \mathbf{X}, \mathbf{X_*}] = \mathbf{K_*}^T [\mathbf{K} + \sigma_n^2 I]^{-1} \mathbf{y} \\
-\text{cov}(\mathbf{f_*}) = \mathbf{K_{**}} - \mathbf{K_*}^T [\mathbf{K} + \sigma_n^2 I]^{-1} \mathbf{K_*}
+\mathbf{f'} = \mathbb{E}[\mathbf{f'} | \mathbf{y}, \mathbf{X}, \mathbf{X'}] = \mathbf{K'}^T [\mathbf{K} + \sigma_n^2 I]^{-1} \mathbf{y} \\
+\text{cov}(\mathbf{f'}) = \mathbf{K''} - \mathbf{K'}^T [\mathbf{K} + \sigma_n^2 I]^{-1} \mathbf{K'}
 $$
 
 The figure below shows an example of GP regression using the squared exponential kernel, the shaded blue area denotes 2 standard deviations.
@@ -81,7 +83,7 @@ The figure below shows an example of GP regression using the squared exponential
   <img src="figures/gpr.png" alt="GP regression example"/>
 </p>
 
-<hr>
+---
 
 ## References
 
