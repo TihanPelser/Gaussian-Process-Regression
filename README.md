@@ -1,6 +1,6 @@
 # Gaussian Process Regression
 
-The following is a brief overview of Gaussian process regression, the [GPR_Theory](GPR_Theory.ipynb) notebook contains a step by step implementation of GP regression following Algorithm 2.1 on p19 of [Gaussian Processes for Machine Learning](https://gaussianprocess.org/gpml/). The [GPR](GPR.ipynb) notebook contains roughly the same information, but uses the custom [gpr](gpr/gpr.py) module which contains all the functions and methods required for perform Gaussian process regression, and takes inspiration from the [Scikit-learn implementation](https://scikit-learn.org/stable/modules/generated/sklearn.gaussian_process.GaussianProcessRegressor.html) of GPR.
+The following is a brief overview of Gaussian process regression, the [GPR_Theory](GPR_Theory.ipynb) notebook contains a step-by-step implementation of GP regression following Algorithm 2.1 on p19 of [Gaussian Processes for Machine Learning](https://gaussianprocess.org/gpml/). The [GPR](GPR.ipynb) notebook contains roughly the same information but uses the custom [gpr](gpr/gpr.py) module, which contains all the functions and methods required for performing Gaussian process regression and takes inspiration from the [Scikit-learn implementation](https://scikit-learn.org/stable/modules/generated/sklearn.gaussian_process.GaussianProcessRegressor.html) of GPR.
 
 ---
 
@@ -8,7 +8,7 @@ The following is a brief overview of Gaussian process regression, the [GPR_Theor
 
 A Gaussian Process defines a distribution over functions that fit a set of observed data. We can loosely think of a function in continuous space as a vector of infinite length containing the function values $f(x)$ at each $x$.
 
-In practice, we rarely need the infinitely many outputs. Instead, we only care about a finite number of outputs. Luckily, inference in Gaussian processes provides the same function outputs regardless of the number of points [1].
+In practice, we rarely need infinitely many outputs. Instead, we only care about a finite number of outputs. Luckily, inference in Gaussian processes provides the same function outputs regardless of the number of points [1].
 
 
 ## Multivariate Gaussian Distribution
@@ -34,11 +34,11 @@ To smooth the outputs of the MVN, we can use a function to control the covarianc
 
 $$ RBF(x_i, x_j) = \sigma_f^2 \exp \left[ - \frac{1}{2}\frac{(x_i - x_j)^2}{l^2} \right] $$
 
-Where $\sigma_f$ is a hyperparameter that determines the vertical span of the kernel outputs and $l$ is the length scale that determines how much the distance between 2 points affects their correlation. (Refer to Figure 2.5 on p.20 of [1] for a visual example of the effects of varying $l$)
+Where $\sigma_f$ is a hyperparameter that determines the vertical span of the kernel outputs, and $l$ is the length scale that determines how much the distance between 2 points affects their correlation. (Refer to Figure 2.5 on p.20 of [1] for a visual example of the effects of varying $l$)
 
 ## Gaussian Process Regression
 
-As mentioned before, a Gaussian Process models a distribution over functions that fit a set a observed data. The mean of this distribution is the function used for regression purposes, and is given by
+As mentioned before, a Gaussian Process models a distribution over functions that fit a set of observed data. The mean of this distribution is the function used for regression purposes and is given by
 
 $$ P(\mathbf{f}|\mathbf{X}) = \mathcal{N}(\mathbf{f}| \mathbf{\mu}, \mathbf{K})$$
 
@@ -70,7 +70,7 @@ In practice, measurements often include some noise, i.e. $y = f(x) + \epsilon$. 
 
 $$\text{cov}(\mathbf{y}) = K(\mathbf{X}, \mathbf{X}) + \sigma_n^2 I$$
 
-And we replace the respective block in the covariance matrix of the joint distribution with the new formulation. This leads to the new predictive equations for Gaussian process regression
+And we replace the respective block in the covariance matrix of the joint distribution with the new formulation. This leads to the new predictive equations for Gaussian process regression.
 
 $$
 \mathbf{f'} = \mathbb{E}[\mathbf{f'} | \mathbf{y}, \mathbf{X}, \mathbf{X'}] = \mathbf{K'}^T [\mathbf{K} + \sigma_n^2 I]^{-1} \mathbf{y}
@@ -81,7 +81,7 @@ $$
 \text{cov}(\mathbf{f'}) = \mathbf{K''} - \mathbf{K'}^T [\mathbf{K} + \sigma_n^2 I]^{-1} \mathbf{K'}
 $$
 
-The figure below shows an example of GP regression using the squared exponential kernel, the shaded blue area denotes 2 standard deviations.
+The figure below shows an example of GP regression using the squared exponential kernel; the shaded blue area denotes 2 standard deviations.
 
 <p align="center">
   <img src="figures/gpr.png" alt="GP regression example"/>
